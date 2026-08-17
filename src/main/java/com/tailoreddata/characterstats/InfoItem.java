@@ -1,0 +1,152 @@
+/*
+ * Copyright (c) 2026, Taylor Burks
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+package com.tailoreddata.characterstats;
+
+import java.util.Locale;
+import java.util.function.BiFunction;
+import java.util.function.Predicate;
+import lombok.Getter;
+
+/**
+ * Every individual data point the overlay can show, in the order the game lists
+ * them. Each item knows which group it belongs to, which config toggle governs
+ * it, and how to render itself from an {@link EquipmentBonuses} snapshot.
+ */
+@Getter
+enum InfoItem
+{
+	ATTACK_STAB(InfoItemGroup.ATTACK, "Stab",
+		CharacterStatsOverlayConfig::showAttackStab,
+		(b, c) -> signed(b.getStabAttack())),
+	ATTACK_SLASH(InfoItemGroup.ATTACK, "Slash",
+		CharacterStatsOverlayConfig::showAttackSlash,
+		(b, c) -> signed(b.getSlashAttack())),
+	ATTACK_CRUSH(InfoItemGroup.ATTACK, "Crush",
+		CharacterStatsOverlayConfig::showAttackCrush,
+		(b, c) -> signed(b.getCrushAttack())),
+	ATTACK_MAGIC(InfoItemGroup.ATTACK, "Magic",
+		CharacterStatsOverlayConfig::showAttackMagic,
+		(b, c) -> signed(b.getMagicAttack())),
+	ATTACK_RANGE(InfoItemGroup.ATTACK, "Range",
+		CharacterStatsOverlayConfig::showAttackRange,
+		(b, c) -> signed(b.getRangeAttack())),
+
+	DEFENCE_STAB(InfoItemGroup.DEFENCE, "Stab",
+		CharacterStatsOverlayConfig::showDefenceStab,
+		(b, c) -> signed(b.getStabDefence())),
+	DEFENCE_SLASH(InfoItemGroup.DEFENCE, "Slash",
+		CharacterStatsOverlayConfig::showDefenceSlash,
+		(b, c) -> signed(b.getSlashDefence())),
+	DEFENCE_CRUSH(InfoItemGroup.DEFENCE, "Crush",
+		CharacterStatsOverlayConfig::showDefenceCrush,
+		(b, c) -> signed(b.getCrushDefence())),
+	DEFENCE_MAGIC(InfoItemGroup.DEFENCE, "Magic",
+		CharacterStatsOverlayConfig::showDefenceMagic,
+		(b, c) -> signed(b.getMagicDefence())),
+	DEFENCE_RANGE(InfoItemGroup.DEFENCE, "Range",
+		CharacterStatsOverlayConfig::showDefenceRange,
+		(b, c) -> signed(b.getRangeDefence())),
+
+	MELEE_STRENGTH(InfoItemGroup.OTHER, "Melee STR",
+		CharacterStatsOverlayConfig::showMeleeStrength,
+		(b, c) -> signed(b.getMeleeStrength())),
+	RANGED_STRENGTH(InfoItemGroup.OTHER, "Ranged STR",
+		CharacterStatsOverlayConfig::showRangedStrength,
+		(b, c) -> signed(b.getRangedStrength())),
+	MAGIC_DAMAGE(InfoItemGroup.OTHER, "Magic DMG",
+		CharacterStatsOverlayConfig::showMagicDamage,
+		(b, c) -> String.format(Locale.US, "%+.1f%%", b.getMagicDamage())),
+	PRAYER(InfoItemGroup.OTHER, "Prayer",
+		CharacterStatsOverlayConfig::showPrayer,
+		(b, c) -> signed(b.getPrayer())),
+
+	UNDEAD(InfoItemGroup.TARGET_SPECIFIC, "Undead",
+		CharacterStatsOverlayConfig::showUndead,
+		(b, c) -> orUnknown(b.getUndeadBonus())),
+	SLAYER(InfoItemGroup.TARGET_SPECIFIC, "Slayer",
+		CharacterStatsOverlayConfig::showSlayer,
+		(b, c) -> orUnknown(b.getSlayerBonus())),
+
+	SPEED_BASE(InfoItemGroup.WEAPON_SPEED, "Base",
+		CharacterStatsOverlayConfig::showWeaponSpeedBase,
+		(b, c) -> speed(b.getWeaponSpeedBase(), c.speedFormat())),
+	SPEED_ACTUAL(InfoItemGroup.WEAPON_SPEED, "Actual",
+		CharacterStatsOverlayConfig::showWeaponSpeedActual,
+		(b, c) -> speed(b.getWeaponSpeedActual(), c.speedFormat()));
+
+	/** Shown in place of a value the plugin cannot currently determine. */
+	static final String UNKNOWN = "?";
+
+	private static final double SECONDS_PER_TICK = 0.6d;
+
+	private final InfoItemGroup group;
+	private final String label;
+	private final Predicate<CharacterStatsOverlayConfig> enabled;
+	private final BiFunction<EquipmentBonuses, CharacterStatsOverlayConfig, String> formatter;
+
+	InfoItem(
+		InfoItemGroup group,
+		String label,
+		Predicate<CharacterStatsOverlayConfig> enabled,
+		BiFunction<EquipmentBonuses, CharacterStatsOverlayConfig, String> formatter)
+	{
+		this.group = group;
+		this.label = label;
+		this.enabled = enabled;
+		this.formatter = formatter;
+	}
+
+	boolean isEnabled(CharacterStatsOverlayConfig config)
+	{
+		return group.isEnabled(config) && enabled.test(config);
+	}
+
+	String format(EquipmentBonuses bonuses, CharacterStatsOverlayConfig config)
+	{
+		return formatter.apply(bonuses, config);
+	}
+
+	private static String signed(int value)
+	{
+		return value < 0 ? Integer.toString(value) : "+" + value;
+	}
+
+	private static String orUnknown(String value)
+	{
+		return value == null ? UNKNOWN : value;
+	}
+
+	private static String speed(int ticks, SpeedFormat format)
+	{
+		if (ticks <= 0)
+		{
+			return UNKNOWN;
+		}
+
+		return format == SpeedFormat.TICKS
+			? ticks + (ticks == 1 ? " tick" : " ticks")
+			: String.format(Locale.US, "%.1fs", ticks * SECONDS_PER_TICK);
+	}
+}
