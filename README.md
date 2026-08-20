@@ -1,13 +1,14 @@
 # Character Stats Overlay
 
 A [RuneLite](https://runelite.net) plugin that shows the numbers from the in-game
-**Equip Your Character** screen as a movable, transparency-adjustable overlay, so
-you can see your equipment bonuses without opening the equipment stats interface.
+**Equip Your Character** screen without opening it — as a sidebar panel, as a
+movable on-screen overlay, or both.
 
 ## What it shows
 
-The overlay mirrors the game's own groupings. Every value can be switched on or
-off individually, and whole groups can be hidden at once.
+Both views mirror the game's own groupings. Every value can be switched on or
+off individually, and whole groups can be hidden at once. In the sidebar each
+value gets its own icon.
 
 | Group | Values |
 | --- | --- |
@@ -17,30 +18,64 @@ off individually, and whole groups can be hidden at once.
 | Target-specific | Undead, Slayer |
 | Weapon speed | Base, Actual |
 
+## Installing
+
+**From the Plugin Hub** (once the submission is merged) — in RuneLite open the
+wrench icon, then **Plugin Hub**, search for *Character Stats Overlay* and click
+**Install**. Updates arrive automatically.
+
+**Before then, or to run a development build**, either:
+
+- Build a plugin jar and side-load it — run `./gradlew jar`, then drop
+  `build/libs/character-stats-overlay.jar` into `.runelite/sideloaded-plugins/`
+  (that folder lives in your home directory: `%USERPROFILE%\.runelite` on
+  Windows, `~/.runelite` elsewhere; create it if it is not there) and restart
+  RuneLite. Use the `jar` task, not `shadowJar` — `shadowJar` bundles a whole
+  standalone client for `java -jar`, and RuneLite loads *every* class it finds
+  in a side-loaded jar.
+- Or run it from source with `./gradlew run`, which launches a development
+  client with the plugin already loaded.
+
+## The two views
+
+**Sidebar panel** — click the shield icon on the right-hand toolbar. The panel
+updates live as your gear and attack style change; you do not have to have it
+open for the plugin to keep tracking.
+
+**Overlay** — a movable panel drawn over the game. Move and resize it the normal
+RuneLite way: hold `Alt` (or use overlay drag mode) and drag it, or drag its
+edge to resize.
+
+Both are fed from the same snapshot, so they can never disagree. Either can be
+turned off on its own under **Display**.
+
 ## Configuration
 
-**Appearance**
+**Display**
 
-- **Transparency** — how opaque the whole overlay is drawn, from 0% (invisible)
-  to 100% (fully opaque). This fades the background *and* the text together.
-- **Background colour** — the panel background, with its own alpha channel. Its
-  alpha stacks with the transparency slider.
-- **Show plugin title** / **Show group headers** / **Header colour** — control the
-  headings.
+- **Show sidebar panel** — whether the plugin's toolbar icon appears.
+- **Show overlay** — whether the on-screen overlay is drawn.
+- **Show icons in sidebar** — the per-value icons.
+- **Show group headers** — the headings above each group, in both views.
 - **Weapon speed units** — seconds, matching the game, or game ticks.
+
+**Overlay appearance**
+
+- **Transparency** — how opaque the overlay is drawn, from 0% (invisible) to
+  100%. This fades the background *and* the text together.
+- **Background colour** — with its own alpha channel, which stacks with the
+  transparency slider.
+- **Show overlay title**, **Overlay header colour**.
 
 **Attack bonus / Defence bonus / Other bonuses / Target-specific / Weapon speed**
 
 Each group has its own section containing a master toggle for the group plus one
-toggle per value.
-
-The overlay itself is moved and resized the normal RuneLite way: hold `Alt` (or
-use the overlay drag mode) and drag it, or drag its edge to resize.
+toggle per value. These apply to both views.
 
 ## How the values are worked out
 
 Most values are summed from the stats of your worn items and update the moment
-your equipment changes — no need to open any interface. The weapon speed's
+your equipment changes — no interface needs to be open. The weapon speed's
 *Actual* row also accounts for your current attack style, which is one tick
 faster than the base speed on **Rapid**.
 
@@ -66,7 +101,7 @@ build submissions.
 
 ```bash
 ./gradlew run     # launch a development RuneLite client with the plugin loaded
-./gradlew build   # compile and run checks
+./gradlew build   # compile and run the tests
 ```
 
 To log in with a Jagex account from the development client, follow

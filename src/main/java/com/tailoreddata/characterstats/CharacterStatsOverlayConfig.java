@@ -40,49 +40,120 @@ public interface CharacterStatsOverlayConfig extends Config
 	String GROUP = "characterstatsoverlay";
 
 	@ConfigSection(
-		name = "Appearance",
-		description = "Transparency, colour and layout of the overlay",
+		name = "Display",
+		description = "Where the stats are shown and how they are formatted",
 		position = 0
+	)
+	String displaySection = "display";
+
+	@ConfigSection(
+		name = "Overlay appearance",
+		description = "Transparency and colour of the on-screen overlay",
+		position = 1
 	)
 	String appearanceSection = "appearance";
 
 	@ConfigSection(
 		name = "Attack bonus",
 		description = "Which attack bonuses to display",
-		position = 1
+		position = 2
 	)
 	String attackSection = "attack";
 
 	@ConfigSection(
 		name = "Defence bonus",
 		description = "Which defence bonuses to display",
-		position = 2
+		position = 3
 	)
 	String defenceSection = "defence";
 
 	@ConfigSection(
 		name = "Other bonuses",
 		description = "Which of the other bonuses to display",
-		position = 3
+		position = 4
 	)
 	String otherSection = "other";
 
 	@ConfigSection(
 		name = "Target-specific",
 		description = "Which target-specific bonuses to display",
-		position = 4
+		position = 5
 	)
 	String targetSection = "target";
 
 	@ConfigSection(
 		name = "Weapon speed",
 		description = "Which weapon speed values to display",
-		position = 5
+		position = 6
 	)
 	String weaponSpeedSection = "weaponSpeed";
 
 	// ------------------------------------------------------------------
-	// Appearance
+	// Display
+	// ------------------------------------------------------------------
+
+	@ConfigItem(
+		keyName = "showSidebar",
+		name = "Show sidebar panel",
+		description = "Show the plugin's icon in the sidebar, which opens the stats panel",
+		position = 0,
+		section = displaySection
+	)
+	default boolean showSidebar()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+		keyName = "showOverlay",
+		name = "Show overlay",
+		description = "Draw the stats on screen as a movable overlay as well",
+		position = 1,
+		section = displaySection
+	)
+	default boolean showOverlay()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+		keyName = "showInfoItemIcons",
+		name = "Show icons in sidebar",
+		description = "Show an icon beside each value in the sidebar panel",
+		position = 2,
+		section = displaySection
+	)
+	default boolean showInfoItemIcons()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+		keyName = "showGroupHeaders",
+		name = "Show group headers",
+		description = "Show the heading above each group, e.g. \"Attack bonus\"",
+		position = 3,
+		section = displaySection
+	)
+	default boolean showGroupHeaders()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+		keyName = "speedFormat",
+		name = "Weapon speed units",
+		description = "Show weapon speed in seconds, as the game does, or in game ticks",
+		position = 4,
+		section = displaySection
+	)
+	default SpeedFormat speedFormat()
+	{
+		return SpeedFormat.SECONDS;
+	}
+
+	// ------------------------------------------------------------------
+	// Overlay appearance
 	// ------------------------------------------------------------------
 
 	@Range(max = 100)
@@ -90,7 +161,7 @@ public interface CharacterStatsOverlayConfig extends Config
 	@ConfigItem(
 		keyName = "opacity",
 		name = "Transparency",
-		description = "How opaque the whole overlay is drawn. 100% is fully opaque, 0% is invisible.",
+		description = "How opaque the overlay is drawn. 100% is fully opaque, 0% is invisible.",
 		position = 0,
 		section = appearanceSection
 	)
@@ -114,7 +185,7 @@ public interface CharacterStatsOverlayConfig extends Config
 
 	@ConfigItem(
 		keyName = "showTitle",
-		name = "Show plugin title",
+		name = "Show overlay title",
 		description = "Show a title line at the top of the overlay",
 		position = 2,
 		section = appearanceSection
@@ -124,41 +195,17 @@ public interface CharacterStatsOverlayConfig extends Config
 		return true;
 	}
 
-	@ConfigItem(
-		keyName = "showGroupHeaders",
-		name = "Show group headers",
-		description = "Show the heading above each group, e.g. \"Attack bonus\"",
-		position = 3,
-		section = appearanceSection
-	)
-	default boolean showGroupHeaders()
-	{
-		return true;
-	}
-
 	@Alpha
 	@ConfigItem(
 		keyName = "headerColor",
-		name = "Header colour",
-		description = "Colour of the plugin title and the group headings",
-		position = 4,
+		name = "Overlay header colour",
+		description = "Colour of the overlay's title and group headings",
+		position = 3,
 		section = appearanceSection
 	)
 	default Color headerColor()
 	{
 		return Color.ORANGE;
-	}
-
-	@ConfigItem(
-		keyName = "speedFormat",
-		name = "Weapon speed units",
-		description = "Show weapon speed in seconds, as the game does, or in game ticks",
-		position = 5,
-		section = appearanceSection
-	)
-	default SpeedFormat speedFormat()
-	{
-		return SpeedFormat.SECONDS;
 	}
 
 	// ------------------------------------------------------------------
