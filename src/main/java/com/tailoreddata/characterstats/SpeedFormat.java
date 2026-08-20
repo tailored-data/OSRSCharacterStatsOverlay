@@ -29,7 +29,7 @@ import lombok.AllArgsConstructor;
 /**
  * How the two weapon speed values are rendered.
  *
- * <p>This must stay {@code public}: RuneLite implements {@link CharacterStatsOverlayConfig}
+ * <p>This must stay {@code public}: RuneLite implements {@link CharacterStatsConfig}
  * with a JDK dynamic proxy, and a proxy class lives in its own module, so it cannot
  * access a package-private type named in the interface's signatures. Narrowing this
  * to package-private makes the first read of the setting throw

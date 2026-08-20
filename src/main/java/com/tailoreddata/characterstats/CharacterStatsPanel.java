@@ -58,7 +58,7 @@ class CharacterStatsPanel extends PluginPanel
 		"Every value is switched off. Turn some back on in the plugin settings.";
 	private static final Color VALUE_COLOR = Color.WHITE;
 
-	private final CharacterStatsOverlayConfig config;
+	private final CharacterStatsConfig config;
 	private final Map<InfoItem, Icon> icons = new EnumMap<>(InfoItem.class);
 	private final Map<InfoItem, JLabel> valueLabels = new EnumMap<>(InfoItem.class);
 	private final JLabel message = new JLabel();
@@ -72,7 +72,7 @@ class CharacterStatsPanel extends PluginPanel
 	private EquipmentBonuses bonuses;
 
 	@Inject
-	CharacterStatsPanel(CharacterStatsOverlayConfig config)
+	CharacterStatsPanel(CharacterStatsConfig config)
 	{
 		this.config = config;
 

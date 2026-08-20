@@ -63,11 +63,11 @@ import net.runelite.client.util.ImageUtil;
 import net.runelite.client.util.Text;
 
 @PluginDescriptor(
-	name = "Character Stats Overlay",
+	name = "Character Stats",
 	description = "Shows your equipment bonuses from the Equip Your Character screen in a sidebar panel and an overlay",
 	tags = {"equipment", "gear", "bonus", "bonuses", "stats", "attack", "defence", "strength", "prayer"}
 )
-public class CharacterStatsOverlayPlugin extends Plugin
+public class CharacterStatsPlugin extends Plugin
 {
 	/**
 	 * The style name the game uses internally for the ranged "Rapid" style, which
@@ -102,7 +102,7 @@ public class CharacterStatsOverlayPlugin extends Plugin
 	private CharacterStatsPanel panel;
 
 	@Inject
-	private CharacterStatsOverlayConfig config;
+	private CharacterStatsConfig config;
 
 	/** The most recently computed snapshot. Written and read only on the client thread. */
 	@Getter
@@ -144,9 +144,9 @@ public class CharacterStatsOverlayPlugin extends Plugin
 	}
 
 	@Provides
-	CharacterStatsOverlayConfig provideConfig(ConfigManager configManager)
+	CharacterStatsConfig provideConfig(ConfigManager configManager)
 	{
-		return configManager.getConfig(CharacterStatsOverlayConfig.class);
+		return configManager.getConfig(CharacterStatsConfig.class);
 	}
 
 	@Subscribe
@@ -166,7 +166,7 @@ public class CharacterStatsOverlayPlugin extends Plugin
 	@Subscribe
 	public void onConfigChanged(ConfigChanged event)
 	{
-		if (!CharacterStatsOverlayConfig.GROUP.equals(event.getGroup()))
+		if (!CharacterStatsConfig.GROUP.equals(event.getGroup()))
 		{
 			return;
 		}
@@ -241,7 +241,7 @@ public class CharacterStatsOverlayPlugin extends Plugin
 		}
 
 		final BufferedImage icon = ImageUtil.loadImageResource(
-			CharacterStatsOverlayPlugin.class, "icons/panel_icon.png");
+			CharacterStatsPlugin.class, "icons/panel_icon.png");
 
 		navButton = NavigationButton.builder()
 			.tooltip(SIDEBAR_TOOLTIP)

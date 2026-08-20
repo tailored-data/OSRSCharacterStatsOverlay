@@ -35,22 +35,22 @@ import lombok.Getter;
 @Getter
 enum InfoItemGroup
 {
-	ATTACK("Attack bonus", CharacterStatsOverlayConfig::showAttackBonus),
-	DEFENCE("Defence bonus", CharacterStatsOverlayConfig::showDefenceBonus),
-	OTHER("Other bonuses", CharacterStatsOverlayConfig::showOtherBonuses),
-	TARGET_SPECIFIC("Target-specific", CharacterStatsOverlayConfig::showTargetSpecific),
-	WEAPON_SPEED("Weapon speed", CharacterStatsOverlayConfig::showWeaponSpeed);
+	ATTACK("Attack bonus", CharacterStatsConfig::showAttackBonus),
+	DEFENCE("Defence bonus", CharacterStatsConfig::showDefenceBonus),
+	OTHER("Other bonuses", CharacterStatsConfig::showOtherBonuses),
+	TARGET_SPECIFIC("Target-specific", CharacterStatsConfig::showTargetSpecific),
+	WEAPON_SPEED("Weapon speed", CharacterStatsConfig::showWeaponSpeed);
 
 	private final String title;
-	private final Predicate<CharacterStatsOverlayConfig> enabled;
+	private final Predicate<CharacterStatsConfig> enabled;
 
-	InfoItemGroup(String title, Predicate<CharacterStatsOverlayConfig> enabled)
+	InfoItemGroup(String title, Predicate<CharacterStatsConfig> enabled)
 	{
 		this.title = title;
 		this.enabled = enabled;
 	}
 
-	boolean isEnabled(CharacterStatsOverlayConfig config)
+	boolean isEnabled(CharacterStatsConfig config)
 	{
 		return enabled.test(config);
 	}

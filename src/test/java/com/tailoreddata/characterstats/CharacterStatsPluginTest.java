@@ -27,11 +27,11 @@ package com.tailoreddata.characterstats;
 import net.runelite.client.RuneLite;
 import net.runelite.client.externalplugins.ExternalPluginManager;
 
-public class CharacterStatsOverlayPluginTest
+public class CharacterStatsPluginTest
 {
 	public static void main(String[] args) throws Exception
 	{
-		ExternalPluginManager.loadBuiltin(CharacterStatsOverlayPlugin.class);
+		ExternalPluginManager.loadBuiltin(CharacterStatsPlugin.class);
 		RuneLite.main(args);
 	}
 }

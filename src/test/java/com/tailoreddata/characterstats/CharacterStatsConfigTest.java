@@ -32,7 +32,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
-public class CharacterStatsOverlayConfigTest
+public class CharacterStatsConfigTest
 {
 	/**
 	 * RuneLite hands plugins their config as a JDK dynamic proxy, and a proxy class
@@ -44,16 +44,16 @@ public class CharacterStatsOverlayConfigTest
 	@Test
 	public void everyGetterIsCallableThroughADynamicProxy() throws Throwable
 	{
-		final CharacterStatsOverlayConfig config = (CharacterStatsOverlayConfig) Proxy.newProxyInstance(
-			CharacterStatsOverlayConfig.class.getClassLoader(),
-			new Class<?>[]{CharacterStatsOverlayConfig.class},
+		final CharacterStatsConfig config = (CharacterStatsConfig) Proxy.newProxyInstance(
+			CharacterStatsConfig.class.getClassLoader(),
+			new Class<?>[]{CharacterStatsConfig.class},
 			(proxy, method, args) -> MethodHandles
-				.privateLookupIn(CharacterStatsOverlayConfig.class, MethodHandles.lookup())
-				.unreflectSpecial(method, CharacterStatsOverlayConfig.class)
+				.privateLookupIn(CharacterStatsConfig.class, MethodHandles.lookup())
+				.unreflectSpecial(method, CharacterStatsConfig.class)
 				.bindTo(proxy)
 				.invokeWithArguments(args == null ? new Object[0] : args));
 
-		for (Method method : CharacterStatsOverlayConfig.class.getDeclaredMethods())
+		for (Method method : CharacterStatsConfig.class.getDeclaredMethods())
 		{
 			if (method.getParameterCount() != 0)
 			{
@@ -71,7 +71,7 @@ public class CharacterStatsOverlayConfigTest
 	@Test
 	public void everyReturnTypeIsPublic()
 	{
-		for (Method method : CharacterStatsOverlayConfig.class.getDeclaredMethods())
+		for (Method method : CharacterStatsConfig.class.getDeclaredMethods())
 		{
 			final Class<?> returnType = method.getReturnType();
 			assertTrue(
