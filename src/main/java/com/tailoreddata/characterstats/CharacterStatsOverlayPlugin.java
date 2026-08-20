@@ -25,8 +25,10 @@
 package com.tailoreddata.characterstats;
 
 import com.google.inject.Provides;
+import java.awt.image.BufferedImage;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import javax.swing.SwingUtilities;
 import lombok.Getter;
 import net.runelite.api.Client;
 import net.runelite.api.EnumComposition;
@@ -49,16 +51,20 @@ import net.runelite.api.widgets.Widget;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.game.ItemStats;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.ui.ClientToolbar;
+import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.ui.overlay.OverlayManager;
+import net.runelite.client.util.ImageUtil;
 import net.runelite.client.util.Text;
 
 @PluginDescriptor(
 	name = "Character Stats Overlay",
-	description = "Shows your equipment bonuses from the Equip Your Character screen as a movable overlay",
+	description = "Shows your equipment bonuses from the Equip Your Character screen in a sidebar panel and an overlay",
 	tags = {"equipment", "gear", "bonus", "bonuses", "stats", "attack", "defence", "strength", "prayer"}
 )
 public class CharacterStatsOverlayPlugin extends Plugin
@@ -71,6 +77,8 @@ public class CharacterStatsOverlayPlugin extends Plugin
 
 	private static final Item[] NO_ITEMS = new Item[0];
 	private static final int NO_SYNC = 0;
+
+	private static final String SIDEBAR_TOOLTIP = "Character stats";
 
 	@Inject
 	private Client client;
@@ -85,7 +93,16 @@ public class CharacterStatsOverlayPlugin extends Plugin
 	private OverlayManager overlayManager;
 
 	@Inject
+	private ClientToolbar clientToolbar;
+
+	@Inject
 	private CharacterStatsOverlay overlay;
+
+	@Inject
+	private CharacterStatsPanel panel;
+
+	@Inject
+	private CharacterStatsOverlayConfig config;
 
 	/** The most recently computed snapshot. Written and read only on the client thread. */
 	@Getter
@@ -100,17 +117,29 @@ public class CharacterStatsOverlayPlugin extends Plugin
 	@Nullable
 	private String syncedSlayer;
 
+	/** Tracks whether the overlay is registered, so the config toggle cannot add it twice. */
+	private boolean overlayAdded;
+
+	@Nullable
+	private NavigationButton navButton;
+
 	@Override
 	protected void startUp()
 	{
-		overlayManager.add(overlay);
+		updateOverlayVisibility();
+		updateSidebarVisibility();
 		clientThread.invokeLater(this::rebuild);
 	}
 
 	@Override
 	protected void shutDown()
 	{
-		overlayManager.remove(overlay);
+		if (overlayAdded)
+		{
+			overlayManager.remove(overlay);
+			overlayAdded = false;
+		}
+		removeSidebar();
 		reset();
 	}
 
@@ -128,6 +157,23 @@ public class CharacterStatsOverlayPlugin extends Plugin
 		{
 			reset();
 		}
+		else if (state == GameState.LOGGED_IN)
+		{
+			rebuild();
+		}
+	}
+
+	@Subscribe
+	public void onConfigChanged(ConfigChanged event)
+	{
+		if (!CharacterStatsOverlayConfig.GROUP.equals(event.getGroup()))
+		{
+			return;
+		}
+
+		updateOverlayVisibility();
+		updateSidebarVisibility();
+		SwingUtilities.invokeLater(panel::refresh);
 	}
 
 	@Subscribe
@@ -156,12 +202,79 @@ public class CharacterStatsOverlayPlugin extends Plugin
 		syncTargetSpecific();
 	}
 
+	private void updateOverlayVisibility()
+	{
+		final boolean wanted = config.showOverlay();
+		if (wanted == overlayAdded)
+		{
+			return;
+		}
+
+		if (wanted)
+		{
+			overlayManager.add(overlay);
+		}
+		else
+		{
+			overlayManager.remove(overlay);
+		}
+		overlayAdded = wanted;
+	}
+
+	private void updateSidebarVisibility()
+	{
+		if (config.showSidebar())
+		{
+			addSidebar();
+		}
+		else
+		{
+			removeSidebar();
+		}
+	}
+
+	private void addSidebar()
+	{
+		if (navButton != null)
+		{
+			return;
+		}
+
+		final BufferedImage icon = ImageUtil.loadImageResource(
+			CharacterStatsOverlayPlugin.class, "icons/panel_icon.png");
+
+		navButton = NavigationButton.builder()
+			.tooltip(SIDEBAR_TOOLTIP)
+			.icon(icon)
+			.priority(6)
+			.panel(panel)
+			.build();
+
+		clientToolbar.addNavigation(navButton);
+	}
+
+	private void removeSidebar()
+	{
+		if (navButton != null)
+		{
+			clientToolbar.removeNavigation(navButton);
+			navButton = null;
+		}
+	}
+
 	private void reset()
 	{
 		bonuses = new EquipmentBonuses();
 		syncedEquipmentHash = NO_SYNC;
 		syncedUndead = null;
 		syncedSlayer = null;
+		publish(null);
+	}
+
+	/** Hands a snapshot to the sidebar panel on the Swing thread. Null means "no data". */
+	private void publish(@Nullable EquipmentBonuses snapshot)
+	{
+		SwingUtilities.invokeLater(() -> panel.setBonuses(snapshot));
 	}
 
 	/**
@@ -193,6 +306,7 @@ public class CharacterStatsOverlayPlugin extends Plugin
 		}
 
 		bonuses = next;
+		publish(client.getGameState() == GameState.LOGGED_IN ? next : null);
 	}
 
 	/**

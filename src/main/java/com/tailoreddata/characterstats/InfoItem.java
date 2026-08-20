@@ -37,62 +37,62 @@ import lombok.Getter;
 @Getter
 enum InfoItem
 {
-	ATTACK_STAB(InfoItemGroup.ATTACK, "Stab",
+	ATTACK_STAB(InfoItemGroup.ATTACK, "Stab", "stab.png",
 		CharacterStatsOverlayConfig::showAttackStab,
 		(b, c) -> signed(b.getStabAttack())),
-	ATTACK_SLASH(InfoItemGroup.ATTACK, "Slash",
+	ATTACK_SLASH(InfoItemGroup.ATTACK, "Slash", "slash.png",
 		CharacterStatsOverlayConfig::showAttackSlash,
 		(b, c) -> signed(b.getSlashAttack())),
-	ATTACK_CRUSH(InfoItemGroup.ATTACK, "Crush",
+	ATTACK_CRUSH(InfoItemGroup.ATTACK, "Crush", "crush.png",
 		CharacterStatsOverlayConfig::showAttackCrush,
 		(b, c) -> signed(b.getCrushAttack())),
-	ATTACK_MAGIC(InfoItemGroup.ATTACK, "Magic",
+	ATTACK_MAGIC(InfoItemGroup.ATTACK, "Magic", "magic.png",
 		CharacterStatsOverlayConfig::showAttackMagic,
 		(b, c) -> signed(b.getMagicAttack())),
-	ATTACK_RANGE(InfoItemGroup.ATTACK, "Range",
+	ATTACK_RANGE(InfoItemGroup.ATTACK, "Range", "range.png",
 		CharacterStatsOverlayConfig::showAttackRange,
 		(b, c) -> signed(b.getRangeAttack())),
 
-	DEFENCE_STAB(InfoItemGroup.DEFENCE, "Stab",
+	DEFENCE_STAB(InfoItemGroup.DEFENCE, "Stab", "def_stab.png",
 		CharacterStatsOverlayConfig::showDefenceStab,
 		(b, c) -> signed(b.getStabDefence())),
-	DEFENCE_SLASH(InfoItemGroup.DEFENCE, "Slash",
+	DEFENCE_SLASH(InfoItemGroup.DEFENCE, "Slash", "def_slash.png",
 		CharacterStatsOverlayConfig::showDefenceSlash,
 		(b, c) -> signed(b.getSlashDefence())),
-	DEFENCE_CRUSH(InfoItemGroup.DEFENCE, "Crush",
+	DEFENCE_CRUSH(InfoItemGroup.DEFENCE, "Crush", "def_crush.png",
 		CharacterStatsOverlayConfig::showDefenceCrush,
 		(b, c) -> signed(b.getCrushDefence())),
-	DEFENCE_MAGIC(InfoItemGroup.DEFENCE, "Magic",
+	DEFENCE_MAGIC(InfoItemGroup.DEFENCE, "Magic", "def_magic.png",
 		CharacterStatsOverlayConfig::showDefenceMagic,
 		(b, c) -> signed(b.getMagicDefence())),
-	DEFENCE_RANGE(InfoItemGroup.DEFENCE, "Range",
+	DEFENCE_RANGE(InfoItemGroup.DEFENCE, "Range", "def_range.png",
 		CharacterStatsOverlayConfig::showDefenceRange,
 		(b, c) -> signed(b.getRangeDefence())),
 
-	MELEE_STRENGTH(InfoItemGroup.OTHER, "Melee STR",
+	MELEE_STRENGTH(InfoItemGroup.OTHER, "Melee STR", "strength.png",
 		CharacterStatsOverlayConfig::showMeleeStrength,
 		(b, c) -> signed(b.getMeleeStrength())),
-	RANGED_STRENGTH(InfoItemGroup.OTHER, "Ranged STR",
+	RANGED_STRENGTH(InfoItemGroup.OTHER, "Ranged STR", "range.png",
 		CharacterStatsOverlayConfig::showRangedStrength,
 		(b, c) -> signed(b.getRangedStrength())),
-	MAGIC_DAMAGE(InfoItemGroup.OTHER, "Magic DMG",
+	MAGIC_DAMAGE(InfoItemGroup.OTHER, "Magic DMG", "magic.png",
 		CharacterStatsOverlayConfig::showMagicDamage,
 		(b, c) -> String.format(Locale.US, "%+.1f%%", b.getMagicDamage())),
-	PRAYER(InfoItemGroup.OTHER, "Prayer",
+	PRAYER(InfoItemGroup.OTHER, "Prayer", "prayer.png",
 		CharacterStatsOverlayConfig::showPrayer,
 		(b, c) -> signed(b.getPrayer())),
 
-	UNDEAD(InfoItemGroup.TARGET_SPECIFIC, "Undead",
+	UNDEAD(InfoItemGroup.TARGET_SPECIFIC, "Undead", "undead.png",
 		CharacterStatsOverlayConfig::showUndead,
 		(b, c) -> orUnknown(b.getUndeadBonus())),
-	SLAYER(InfoItemGroup.TARGET_SPECIFIC, "Slayer",
+	SLAYER(InfoItemGroup.TARGET_SPECIFIC, "Slayer", "slayer.png",
 		CharacterStatsOverlayConfig::showSlayer,
 		(b, c) -> orUnknown(b.getSlayerBonus())),
 
-	SPEED_BASE(InfoItemGroup.WEAPON_SPEED, "Base",
+	SPEED_BASE(InfoItemGroup.WEAPON_SPEED, "Base", "speed_base.png",
 		CharacterStatsOverlayConfig::showWeaponSpeedBase,
 		(b, c) -> speed(b.getWeaponSpeedBase(), c.speedFormat())),
-	SPEED_ACTUAL(InfoItemGroup.WEAPON_SPEED, "Actual",
+	SPEED_ACTUAL(InfoItemGroup.WEAPON_SPEED, "Actual", "speed_actual.png",
 		CharacterStatsOverlayConfig::showWeaponSpeedActual,
 		(b, c) -> speed(b.getWeaponSpeedActual(), c.speedFormat()));
 
@@ -103,17 +103,21 @@ enum InfoItem
 
 	private final InfoItemGroup group;
 	private final String label;
+	/** File name of this item's 16x16 sidebar icon, under {@code icons/} on the classpath. */
+	private final String iconFile;
 	private final Predicate<CharacterStatsOverlayConfig> enabled;
 	private final BiFunction<EquipmentBonuses, CharacterStatsOverlayConfig, String> formatter;
 
 	InfoItem(
 		InfoItemGroup group,
 		String label,
+		String iconFile,
 		Predicate<CharacterStatsOverlayConfig> enabled,
 		BiFunction<EquipmentBonuses, CharacterStatsOverlayConfig, String> formatter)
 	{
 		this.group = group;
 		this.label = label;
+		this.iconFile = iconFile;
 		this.enabled = enabled;
 		this.formatter = formatter;
 	}
