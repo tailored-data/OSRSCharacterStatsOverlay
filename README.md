@@ -18,6 +18,24 @@ value gets its own icon.
 | Target-specific | Undead, Slayer |
 | Weapon speed | Base, Actual |
 
+## Installing
+
+**From the Plugin Hub** (once the submission is merged) — in RuneLite open the
+wrench icon, then **Plugin Hub**, search for *Character Stats Overlay* and click
+**Install**. Updates arrive automatically.
+
+**Before then, or to run a development build**, either:
+
+- Build a plugin jar and side-load it — run `./gradlew jar`, then drop
+  `build/libs/character-stats-overlay.jar` into `.runelite/sideloaded-plugins/`
+  (that folder lives in your home directory: `%USERPROFILE%\.runelite` on
+  Windows, `~/.runelite` elsewhere; create it if it is not there) and restart
+  RuneLite. Use the `jar` task, not `shadowJar` — `shadowJar` bundles a whole
+  standalone client for `java -jar`, and RuneLite loads *every* class it finds
+  in a side-loaded jar.
+- Or run it from source with `./gradlew run`, which launches a development
+  client with the plugin already loaded.
+
 ## The two views
 
 **Sidebar panel** — click the shield icon on the right-hand toolbar. The panel
