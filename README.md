@@ -1,4 +1,4 @@
-# Character Stats Overlay
+# Character Stats
 
 A [RuneLite](https://runelite.net) plugin that shows the numbers from the in-game
 **Equip Your Character** screen without opening it — as a sidebar panel, as a
@@ -21,13 +21,13 @@ value gets its own icon.
 ## Installing
 
 **From the Plugin Hub** (once the submission is merged) — in RuneLite open the
-wrench icon, then **Plugin Hub**, search for *Character Stats Overlay* and click
+wrench icon, then **Plugin Hub**, search for *Character Stats* and click
 **Install**. Updates arrive automatically.
 
 **Before then, or to run a development build**, either:
 
 - Build a plugin jar and side-load it — run `./gradlew jar`, then drop
-  `build/libs/character-stats-overlay.jar` into `.runelite/sideloaded-plugins/`
+  `build/libs/character-stats.jar` into `.runelite/sideloaded-plugins/`
   (that folder lives in your home directory: `%USERPROFILE%\.runelite` on
   Windows, `~/.runelite` elsewhere; create it if it is not there) and restart
   RuneLite. Use the `jar` task, not `shadowJar` — `shadowJar` bundles a whole

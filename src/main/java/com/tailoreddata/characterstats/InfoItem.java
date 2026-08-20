@@ -30,70 +30,72 @@ import java.util.function.Predicate;
 import lombok.Getter;
 
 /**
- * Every individual data point the overlay can show, in the order the game lists
- * them. Each item knows which group it belongs to, which config toggle governs
- * it, and how to render itself from an {@link EquipmentBonuses} snapshot.
+ * Every individual data point the plugin can show, in the order the game lists
+ * them. Each item knows which group it belongs to, its sidebar icon, which
+ * config toggle governs it, and how to render itself from an
+ * {@link EquipmentBonuses} snapshot. Both the sidebar panel and the overlay
+ * render from this one list.
  */
 @Getter
 enum InfoItem
 {
 	ATTACK_STAB(InfoItemGroup.ATTACK, "Stab", "stab.png",
-		CharacterStatsOverlayConfig::showAttackStab,
+		CharacterStatsConfig::showAttackStab,
 		(b, c) -> signed(b.getStabAttack())),
 	ATTACK_SLASH(InfoItemGroup.ATTACK, "Slash", "slash.png",
-		CharacterStatsOverlayConfig::showAttackSlash,
+		CharacterStatsConfig::showAttackSlash,
 		(b, c) -> signed(b.getSlashAttack())),
 	ATTACK_CRUSH(InfoItemGroup.ATTACK, "Crush", "crush.png",
-		CharacterStatsOverlayConfig::showAttackCrush,
+		CharacterStatsConfig::showAttackCrush,
 		(b, c) -> signed(b.getCrushAttack())),
 	ATTACK_MAGIC(InfoItemGroup.ATTACK, "Magic", "magic.png",
-		CharacterStatsOverlayConfig::showAttackMagic,
+		CharacterStatsConfig::showAttackMagic,
 		(b, c) -> signed(b.getMagicAttack())),
 	ATTACK_RANGE(InfoItemGroup.ATTACK, "Range", "range.png",
-		CharacterStatsOverlayConfig::showAttackRange,
+		CharacterStatsConfig::showAttackRange,
 		(b, c) -> signed(b.getRangeAttack())),
 
 	DEFENCE_STAB(InfoItemGroup.DEFENCE, "Stab", "def_stab.png",
-		CharacterStatsOverlayConfig::showDefenceStab,
+		CharacterStatsConfig::showDefenceStab,
 		(b, c) -> signed(b.getStabDefence())),
 	DEFENCE_SLASH(InfoItemGroup.DEFENCE, "Slash", "def_slash.png",
-		CharacterStatsOverlayConfig::showDefenceSlash,
+		CharacterStatsConfig::showDefenceSlash,
 		(b, c) -> signed(b.getSlashDefence())),
 	DEFENCE_CRUSH(InfoItemGroup.DEFENCE, "Crush", "def_crush.png",
-		CharacterStatsOverlayConfig::showDefenceCrush,
+		CharacterStatsConfig::showDefenceCrush,
 		(b, c) -> signed(b.getCrushDefence())),
 	DEFENCE_MAGIC(InfoItemGroup.DEFENCE, "Magic", "def_magic.png",
-		CharacterStatsOverlayConfig::showDefenceMagic,
+		CharacterStatsConfig::showDefenceMagic,
 		(b, c) -> signed(b.getMagicDefence())),
 	DEFENCE_RANGE(InfoItemGroup.DEFENCE, "Range", "def_range.png",
-		CharacterStatsOverlayConfig::showDefenceRange,
+		CharacterStatsConfig::showDefenceRange,
 		(b, c) -> signed(b.getRangeDefence())),
 
 	MELEE_STRENGTH(InfoItemGroup.OTHER, "Melee STR", "strength.png",
-		CharacterStatsOverlayConfig::showMeleeStrength,
+		CharacterStatsConfig::showMeleeStrength,
 		(b, c) -> signed(b.getMeleeStrength())),
 	RANGED_STRENGTH(InfoItemGroup.OTHER, "Ranged STR", "range.png",
-		CharacterStatsOverlayConfig::showRangedStrength,
+		CharacterStatsConfig::showRangedStrength,
 		(b, c) -> signed(b.getRangedStrength())),
 	MAGIC_DAMAGE(InfoItemGroup.OTHER, "Magic DMG", "magic.png",
-		CharacterStatsOverlayConfig::showMagicDamage,
+		CharacterStatsConfig::showMagicDamage,
 		(b, c) -> String.format(Locale.US, "%+.1f%%", b.getMagicDamage())),
 	PRAYER(InfoItemGroup.OTHER, "Prayer", "prayer.png",
-		CharacterStatsOverlayConfig::showPrayer,
+		CharacterStatsConfig::showPrayer,
 		(b, c) -> signed(b.getPrayer())),
 
 	UNDEAD(InfoItemGroup.TARGET_SPECIFIC, "Undead", "undead.png",
-		CharacterStatsOverlayConfig::showUndead,
+		CharacterStatsConfig::showUndead,
 		(b, c) -> orUnknown(b.getUndeadBonus())),
 	SLAYER(InfoItemGroup.TARGET_SPECIFIC, "Slayer", "slayer.png",
-		CharacterStatsOverlayConfig::showSlayer,
+		CharacterStatsConfig::showSlayer,
 		(b, c) -> orUnknown(b.getSlayerBonus())),
 
 	SPEED_BASE(InfoItemGroup.WEAPON_SPEED, "Base", "speed_base.png",
-		CharacterStatsOverlayConfig::showWeaponSpeedBase,
+		CharacterStatsConfig::showWeaponSpeedBase,
 		(b, c) -> speed(b.getWeaponSpeedBase(), c.speedFormat())),
 	SPEED_ACTUAL(InfoItemGroup.WEAPON_SPEED, "Actual", "speed_actual.png",
-		CharacterStatsOverlayConfig::showWeaponSpeedActual,
+		CharacterStatsConfig::showWeaponSpeedActual,
 		(b, c) -> speed(b.getWeaponSpeedActual(), c.speedFormat()));
 
 	/** Shown in place of a value the plugin cannot currently determine. */
@@ -105,15 +107,15 @@ enum InfoItem
 	private final String label;
 	/** File name of this item's 16x16 sidebar icon, under {@code icons/} on the classpath. */
 	private final String iconFile;
-	private final Predicate<CharacterStatsOverlayConfig> enabled;
-	private final BiFunction<EquipmentBonuses, CharacterStatsOverlayConfig, String> formatter;
+	private final Predicate<CharacterStatsConfig> enabled;
+	private final BiFunction<EquipmentBonuses, CharacterStatsConfig, String> formatter;
 
 	InfoItem(
 		InfoItemGroup group,
 		String label,
 		String iconFile,
-		Predicate<CharacterStatsOverlayConfig> enabled,
-		BiFunction<EquipmentBonuses, CharacterStatsOverlayConfig, String> formatter)
+		Predicate<CharacterStatsConfig> enabled,
+		BiFunction<EquipmentBonuses, CharacterStatsConfig, String> formatter)
 	{
 		this.group = group;
 		this.label = label;
@@ -122,12 +124,12 @@ enum InfoItem
 		this.formatter = formatter;
 	}
 
-	boolean isEnabled(CharacterStatsOverlayConfig config)
+	boolean isEnabled(CharacterStatsConfig config)
 	{
 		return group.isEnabled(config) && enabled.test(config);
 	}
 
-	String format(EquipmentBonuses bonuses, CharacterStatsOverlayConfig config)
+	String format(EquipmentBonuses bonuses, CharacterStatsConfig config)
 	{
 		return formatter.apply(bonuses, config);
 	}

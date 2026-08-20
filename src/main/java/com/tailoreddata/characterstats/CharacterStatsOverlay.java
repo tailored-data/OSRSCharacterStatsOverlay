@@ -51,11 +51,11 @@ class CharacterStatsOverlay extends OverlayPanel
 	private static final int DEFAULT_WIDTH = 150;
 
 	private final Client client;
-	private final CharacterStatsOverlayPlugin plugin;
-	private final CharacterStatsOverlayConfig config;
+	private final CharacterStatsPlugin plugin;
+	private final CharacterStatsConfig config;
 
 	@Inject
-	CharacterStatsOverlay(Client client, CharacterStatsOverlayPlugin plugin, CharacterStatsOverlayConfig config)
+	CharacterStatsOverlay(Client client, CharacterStatsPlugin plugin, CharacterStatsConfig config)
 	{
 		super(plugin);
 		this.client = client;

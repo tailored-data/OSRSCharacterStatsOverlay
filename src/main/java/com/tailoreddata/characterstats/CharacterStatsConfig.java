@@ -34,8 +34,8 @@ import net.runelite.client.config.Range;
 import net.runelite.client.config.Units;
 import net.runelite.client.ui.overlay.components.ComponentConstants;
 
-@ConfigGroup(CharacterStatsOverlayConfig.GROUP)
-public interface CharacterStatsOverlayConfig extends Config
+@ConfigGroup(CharacterStatsConfig.GROUP)
+public interface CharacterStatsConfig extends Config
 {
 	String GROUP = "characterstatsoverlay";
 

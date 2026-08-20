@@ -14,7 +14,7 @@ repositories {
 }
 
 def runeLiteVersion = 'latest.release'
-def pluginMainClass = 'com.tailoreddata.characterstats.CharacterStatsOverlayPluginTest'
+def pluginMainClass = 'com.tailoreddata.characterstats.CharacterStatsPluginTest'
 
 dependencies {
 	compileOnly group: 'net.runelite', name:'client', version: runeLiteVersion

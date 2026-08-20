@@ -31,9 +31,9 @@ import net.runelite.client.game.ItemEquipmentStats;
 
 /**
  * A snapshot of every value the "Equip Your Character" screen shows. A fresh
- * instance is built by {@link CharacterStatsOverlayPlugin} whenever the
- * equipment or the attack style changes, then published for the overlay to
- * read; instances are never mutated after publication.
+ * instance is built by {@link CharacterStatsPlugin} whenever the equipment or
+ * the attack style changes, then published for the sidebar panel and the
+ * overlay to read; instances are never mutated after publication.
  */
 @Getter
 class EquipmentBonuses
